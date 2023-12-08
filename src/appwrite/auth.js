@@ -4,6 +4,7 @@ import { Client, Account,ID } from "appwrite";
 export class AuthService {
     client=new Client();
     account;
+    //Making constructor when user will create the object then account will be initialsed and client will be set 
     constructor(){
         this.client
         .setEndpoint(conf.appwriteURL) 
@@ -14,18 +15,23 @@ export class AuthService {
     async createAccount({email, password,name}){
         try {
            const userAccount= await this.account.create(ID.unique(),email,password,name);
+           //if user created account successfully then direct login the user 
+           if(userAccount){
+             return this.login(email,password);
+           }
+           else {
            return userAccount;
+           }
         } catch (error) {
             throw error;
         }
     }
     //function for login 
-    async login({email, password}){
+    async login({email,password}){
         try {
-          return  await this.account.createEmailSession(email,password);
-          
+           return  await this.account.createEmailSession(email,password);
         } catch (error) {
-            throw error;
+           throw error;   
         }
     }
 
@@ -38,6 +44,8 @@ export class AuthService {
         } catch (error) {
             throw error;
         }
+
+        return null;
     }
 
     //to make user logout
@@ -50,5 +58,5 @@ export class AuthService {
     }
 };
 
-const authService=new AuthService();
+const authService=new AuthService();//making object using new keyword
 export default authService;
